@@ -1,9 +1,3 @@
-//
-//  AppDelegate.swift
-//  ImageFeed
-//
-//  Created by MARIIA on 22.03.23.
-//
 
 import UIKit
 
