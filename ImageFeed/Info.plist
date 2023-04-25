@@ -2,13 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>UIAppFonts</key>
-         <array>
-              <string>SF-Pro-Text-Bold</string>
-              <string>SF-Pro-Text-Medium</string>
-              <string>SF-Pro-Text-Regular</string>
-              <string>SF-Pro-Text-Pro</string>
-         </array>
+	<key>UIAppFonts</key>
+	<array/>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

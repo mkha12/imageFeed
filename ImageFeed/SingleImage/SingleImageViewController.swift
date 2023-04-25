@@ -1,17 +1,16 @@
 import UIKit
 
 class SingleImageViewController: UIViewController {
-   
+    
     var image: UIImage! {
         didSet {
-                if isViewLoaded {
-                    imageView.image = image
-                    rescaleAndCenterImageInScrollView(image: image)
-                }
+            if isViewLoaded {
+                imageView.image = image
+                rescaleAndCenterImageInScrollView(image: image)
             }
-
         }
-
+    }
+    
     @IBOutlet var imageView: UIImageView!
     @IBOutlet var scrollView: UIScrollView!
     
@@ -23,16 +22,17 @@ class SingleImageViewController: UIViewController {
         let activityController = UIActivityViewController(activityItems: [imageView.image!], applicationActivities: nil)
         present(activityController, animated: true, completion: nil)
         
-        }
-
-
+    }
+    
     override func viewDidLoad() {
-            super.viewDidLoad()
-            imageView.image = image
+        super.viewDidLoad()
+        scrollView.delegate = self // добавила
+        
+        imageView.image = image
         rescaleAndCenterImageInScrollView(image: image)
         scrollView.minimumZoomScale = 0.1
         scrollView.maximumZoomScale = 1.25
-        }
+    }
     
     private func rescaleAndCenterImageInScrollView(image: UIImage) {
         let minZoomScale = scrollView.minimumZoomScale
