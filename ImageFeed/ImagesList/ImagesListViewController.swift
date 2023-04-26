@@ -3,7 +3,7 @@ import UIKit
 class ImagesListViewController: UIViewController {
     private let ShowSingleImageSegueIdentifier = "ShowSingleImage"
     
-    @IBOutlet private var tableView: UITableView!
+    @IBOutlet private weak var tableView: UITableView!
     private let photosName: [String] = Array(0..<21).map{ "\($0)" }
     
     override func viewDidLoad() {
