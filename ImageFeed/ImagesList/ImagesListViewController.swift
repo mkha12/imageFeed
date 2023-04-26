@@ -1,8 +1,9 @@
 import UIKit
 
 class ImagesListViewController: UIViewController {
+    private let ShowSingleImageSegueIdentifier = "ShowSingleImage"
     
-    @IBOutlet private var tableView: UITableView!
+    @IBOutlet private weak var tableView: UITableView!
     private let photosName: [String] = Array(0..<21).map{ "\($0)" }
     
     override func viewDidLoad() {
@@ -16,6 +17,17 @@ class ImagesListViewController: UIViewController {
         formatter.timeStyle = .none
         return formatter
     }()
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == ShowSingleImageSegueIdentifier { // 1
+            let viewController = segue.destination as! SingleImageViewController // 2
+            let indexPath = sender as! IndexPath // 3
+            let image = UIImage(named: photosName[indexPath.row]) // 4
+            viewController.image = image // 5
+        } else {
+            super.prepare(for: segue, sender: sender) // 6
+        }
+    }
 }
 
 extension ImagesListViewController: UITableViewDataSource {
@@ -38,7 +50,10 @@ extension ImagesListViewController: UITableViewDataSource {
 }
 
 extension ImagesListViewController: UITableViewDelegate {
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        performSegue(withIdentifier: ShowSingleImageSegueIdentifier, sender: indexPath)
+    }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         guard let image = UIImage(named: photosName[indexPath.row]) else {
@@ -66,3 +81,4 @@ extension ImagesListViewController {
         cell.likeButton.setImage(likeImage, for: .normal)
     }
 }
+
