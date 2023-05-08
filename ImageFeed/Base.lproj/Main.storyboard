@@ -302,6 +302,10 @@ YP Background</string>
                                     <wkPreferences key="preferences"/>
                                 </wkWebViewConfiguration>
                             </wkWebView>
+                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="MZW-oy-au9">
+                                <rect key="frame" x="0.0" y="92" width="393" height="4"/>
+                                <color key="tintColor" name="background"/>
+                            </progressView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="JjD-fG-zZJ">
                                 <rect key="frame" x="9" y="68" width="24" height="24"/>
                                 <constraints>
@@ -321,13 +325,17 @@ YP Background</string>
                             <constraint firstItem="JjD-fG-zZJ" firstAttribute="leading" secondItem="eQF-7C-Qpg" secondAttribute="leading" constant="9" id="1TV-tZ-0xh"/>
                             <constraint firstItem="JjD-fG-zZJ" firstAttribute="top" secondItem="eQF-7C-Qpg" secondAttribute="top" constant="9" id="9uv-el-49Q"/>
                             <constraint firstItem="S2M-jK-Or3" firstAttribute="leading" secondItem="eQF-7C-Qpg" secondAttribute="leading" id="FZZ-am-pzC"/>
+                            <constraint firstAttribute="trailing" secondItem="MZW-oy-au9" secondAttribute="trailing" id="K2e-hv-uFo"/>
+                            <constraint firstItem="MZW-oy-au9" firstAttribute="top" secondItem="JjD-fG-zZJ" secondAttribute="bottom" id="OIa-M4-k8b"/>
                             <constraint firstItem="eQF-7C-Qpg" firstAttribute="bottom" secondItem="S2M-jK-Or3" secondAttribute="bottom" id="UeB-E8-j9z"/>
+                            <constraint firstItem="MZW-oy-au9" firstAttribute="leading" secondItem="u6C-vq-pkw" secondAttribute="leading" id="VUe-YH-2Zu"/>
                             <constraint firstItem="S2M-jK-Or3" firstAttribute="top" secondItem="eQF-7C-Qpg" secondAttribute="top" id="VXp-aE-3Uv"/>
                             <constraint firstItem="eQF-7C-Qpg" firstAttribute="trailing" secondItem="S2M-jK-Or3" secondAttribute="trailing" id="yua-gp-xEk"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="y9X-vG-319"/>
                     <connections>
+                        <outlet property="progressView" destination="MZW-oy-au9" id="utP-Ny-5VY"/>
                         <outlet property="webView" destination="S2M-jK-Or3" id="fPL-wx-odI"/>
                     </connections>
                 </viewController>
@@ -355,6 +363,9 @@ YP Background</string>
         </namedColor>
         <namedColor name="YP White 1">
             <color red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </namedColor>
+        <namedColor name="background">
+            <color red="0.10199999809265137" green="0.10599999874830246" blue="0.13300000131130219" alpha="0.50400000810623169" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
         <namedColor name="black">
             <color red="0.10199999809265137" green="0.10599999874830246" blue="0.13300000131130219" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
