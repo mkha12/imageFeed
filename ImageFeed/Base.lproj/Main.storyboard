@@ -195,7 +195,7 @@ YP Background</string>
         <!--Tab Bar Controller-->
         <scene sceneID="U66-p1-h49">
             <objects>
-                <tabBarController id="bij-kp-NNB" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="TabBarViewController" id="bij-kp-NNB" sceneMemberID="viewController">
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="vcA-ph-Sya">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -342,6 +342,21 @@ YP Background</string>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="D9p-ei-HJF" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-752" y="-2"/>
+        </scene>
+        <!--Splash View Controller-->
+        <scene sceneID="uyB-rT-8tc">
+            <objects>
+                <viewController storyboardIdentifier="SplashViewController" id="HnX-bS-fmY" customClass="SplashViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="75w-o2-DCW">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="Xca-yj-3Qd"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="IOA-cx-98Q" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-931" y="-811"/>
         </scene>
     </scenes>
     <resources>
