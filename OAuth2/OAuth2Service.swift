@@ -30,13 +30,18 @@ final class OAuth2Service {
             case .success(let body):
                 let authToken = body.accessToken
                 self.authToken = authToken
-                completion(.success(authToken))
+                DispatchQueue.main.async {
+                    completion(.success(authToken))
+                }
             case .failure(let error):
-                completion(.failure(error))
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
             }
         }
         task.resume()
     }
+
     
     private func object(
         for request: URLRequest,

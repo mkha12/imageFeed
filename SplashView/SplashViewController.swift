@@ -4,14 +4,15 @@ final class SplashViewController: UIViewController {
     
     
     private let ShowAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
-
     private let oauth2Service = OAuth2Service()
     private let oauth2TokenStorage = OAuth2TokenStorage()
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if let token = oauth2TokenStorage.token {
+        //if let token = oauth2TokenStorage.token
+        if OAuth2TokenStorage.token != nil
+        {
             switchToTabBarController()
         } else {
             performSegue(withIdentifier: ShowAuthenticationScreenSegueIdentifier, sender: nil)
@@ -35,6 +36,7 @@ final class SplashViewController: UIViewController {
     }
 }
 
+
 extension SplashViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == ShowAuthenticationScreenSegueIdentifier {
@@ -49,6 +51,7 @@ extension SplashViewController {
     }
 }
 
+
 extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
         dismiss(animated: true) { [weak self] in
@@ -61,7 +64,9 @@ extension SplashViewController: AuthViewControllerDelegate {
         oauth2Service.fetchOAuthToken(code) { [weak self] result in
             guard let self = self else { return }
             switch result {
-            case .success:
+            case .success(let authToken):
+
+                OAuth2TokenStorage.token = authToken    // Сохранить токен в OAuth2TokenStorage
                 self.switchToTabBarController()
             case .failure:
                 // TODO [Sprint 11]
@@ -69,4 +74,5 @@ extension SplashViewController: AuthViewControllerDelegate {
             }
         }
     }
+
 }
