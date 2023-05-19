@@ -3,6 +3,9 @@ import Foundation
 final class OAuth2Service {
     static let shared = OAuth2Service()
     let urlSession = URLSession.shared
+    private var activeTask: URLSessionTask?
+    private var activeCode: String?
+
     
     private(set) var authToken: String? {
         get {
@@ -14,35 +17,47 @@ final class OAuth2Service {
     }
     
     private enum NetworkError: Error {
-           case httpStatusCode(Int)
-           case urlRequestError(Error)
-           case urlSessionError
-       }
+        case httpStatusCode(Int)
+        case urlRequestError(Error)
+        case urlSessionError
+    }
     
     func fetchOAuthToken(
         _ code: String,
         completion: @escaping (Result<String, Error>) -> Void
     ) {
+        assert(Thread.isMainThread)
+        
+        if let activeTask = activeTask, activeCode != code {
+            activeTask.cancel()
+        } else if activeTask != nil {
+            return
+        }
+        
+        activeCode = code
+        
         let request = authTokenRequest(code: code)
         let task = self.object(for: request) { [weak self] result in
             guard let self = self else { return }
-            switch result {
-            case .success(let body):
-                let authToken = body.accessToken
-                self.authToken = authToken
-                DispatchQueue.main.async {
+            DispatchQueue.main.async {
+                self.activeTask = nil
+                switch result {
+                case .success(let body):
+                    let authToken = body.accessToken
+                    self.authToken = authToken
                     completion(.success(authToken))
-                }
-            case .failure(let error):
-                DispatchQueue.main.async {
+                case .failure(let error):
+                    self.activeCode = nil 
                     completion(.failure(error))
                 }
             }
         }
+        
+        activeTask = task
         task.resume()
     }
 
-    
+
     private func object(
         for request: URLRequest,
         completion: @escaping (Result<OAuthTokenResponseBody, Error>) -> Void

@@ -1,4 +1,5 @@
 import UIKit
+import ProgressHUD
 
 final class SplashViewController: UIViewController {
     
@@ -6,28 +7,26 @@ final class SplashViewController: UIViewController {
     private let ShowAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
     private let oauth2Service = OAuth2Service()
     private let oauth2TokenStorage = OAuth2TokenStorage()
-
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        //if let token = oauth2TokenStorage.token
-        if OAuth2TokenStorage.token != nil
-        {
+        
+        if OAuth2TokenStorage.token != nil {
             switchToTabBarController()
         } else {
             performSegue(withIdentifier: ShowAuthenticationScreenSegueIdentifier, sender: nil)
         }
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setNeedsStatusBarAppearanceUpdate()
     }
-
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .lightContent
     }
-
+    
     private func switchToTabBarController() {
         guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
         let tabBarController = UIStoryboard(name: "Main", bundle: .main)
@@ -54,25 +53,32 @@ extension SplashViewController {
 
 extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
+        //ProgressHUD.show()
+        UIBlockingProgressHUD.show()
         dismiss(animated: true) { [weak self] in
             guard let self = self else { return }
             self.fetchOAuthToken(code)
         }
     }
+    
 
+    
     private func fetchOAuthToken(_ code: String) {
         oauth2Service.fetchOAuthToken(code) { [weak self] result in
             guard let self = self else { return }
             switch result {
             case .success(let authToken):
-
-                OAuth2TokenStorage.token = authToken    // Сохранить токен в OAuth2TokenStorage
+                //ProgressHUD.dismiss()
+                UIBlockingProgressHUD.dismiss()
+                OAuth2TokenStorage.token = authToken
                 self.switchToTabBarController()
             case .failure:
+                //ProgressHUD.dismiss()
+                UIBlockingProgressHUD.dismiss()
                 // TODO [Sprint 11]
                 break
             }
         }
     }
-
+    
 }
