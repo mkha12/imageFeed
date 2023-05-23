@@ -14,6 +14,7 @@
 		CC60C89B29F7BBDE007C214E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CC60C89A29F7BBDE007C214E /* Assets.xcassets */; };
 		CC60C89D29F7BEC9007C214E /* UIColor+Extentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC60C89C29F7BEC9007C214E /* UIColor+Extentions.swift */; };
 		CC9748F92A17CCEE006D42A8 /* UIBlockingProgressHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC9748F82A17CCEE006D42A8 /* UIBlockingProgressHUD.swift */; };
+		CC9748FB2A17D21E006D42A8 /* ProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC9748FA2A17D21E006D42A8 /* ProfileService.swift */; };
 		CCA7DDB429CB66D600027858 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA7DDB329CB66D600027858 /* AppDelegate.swift */; };
 		CCA7DDB629CB66D600027858 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA7DDB529CB66D600027858 /* SceneDelegate.swift */; };
 		CCA7DDB829CB66D600027858 /* ImagesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCA7DDB729CB66D600027858 /* ImagesListViewController.swift */; };
@@ -34,6 +35,7 @@
 		CC60C89A29F7BBDE007C214E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CC60C89C29F7BEC9007C214E /* UIColor+Extentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extentions.swift"; sourceTree = "<group>"; };
 		CC9748F82A17CCEE006D42A8 /* UIBlockingProgressHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIBlockingProgressHUD.swift; sourceTree = "<group>"; };
+		CC9748FA2A17D21E006D42A8 /* ProfileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileService.swift; sourceTree = "<group>"; };
 		CCA7DDB029CB66D600027858 /* ImageFeed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageFeed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CCA7DDB329CB66D600027858 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CCA7DDB529CB66D600027858 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -102,9 +104,18 @@
 			path = Resourses;
 			sourceTree = "<group>";
 		};
+		CC9748FC2A17D225006D42A8 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				CC9748FA2A17D21E006D42A8 /* ProfileService.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
 		CCA7DDA729CB66D500027858 = {
 			isa = PBXGroup;
 			children = (
+				CC9748FC2A17D225006D42A8 /* Profile */,
 				CC4A86322A0C17BA00C29E73 /* OAuth2 */,
 				CC4A862F2A0C0E8100C29E73 /* SplashView */,
 				CCA7DDB229CB66D600027858 /* ImageFeed */,
@@ -176,7 +187,6 @@
 				CCA7DDAC29CB66D500027858 /* Sources */,
 				CCA7DDAD29CB66D500027858 /* Frameworks */,
 				CCA7DDAE29CB66D500027858 /* Resources */,
-				CC5394AD2A140FC600B7C0A1 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -239,26 +249,6 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		CC5394AD2A140FC600B7C0A1 /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [[ \"$(uname -m)\" == \"arm64\" ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\n";
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		CCA7DDAC29CB66D500027858 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -278,6 +268,7 @@
 				CCEC8FBB29FC08B500152660 /* Constants.swift in Sources */,
 				CC4A862E2A0C0E7700C29E73 /* SplashViewController.swift in Sources */,
 				CC9748F92A17CCEE006D42A8 /* UIBlockingProgressHUD.swift in Sources */,
+				CC9748FB2A17D21E006D42A8 /* ProfileService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -437,7 +428,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ru.yandex.practicum.Image223ge23;
+				PRODUCT_BUNDLE_IDENTIFIER = "ru.yandex.practicum.Image223ge23---";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -468,7 +459,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = ru.yandex.practicum.ImageFeed122;
+				PRODUCT_BUNDLE_IDENTIFIER = ru.yandex.practicum.ImageFeed12265;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
