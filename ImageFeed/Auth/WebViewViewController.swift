@@ -13,10 +13,19 @@ final class WebViewViewController: UIViewController {
         
     }
     weak var delegate: WebViewViewControllerDelegate?
+    private var estimatedProgressObservation: NSKeyValueObservation?
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
         webView.navigationDelegate = self
+        estimatedProgressObservation = webView.observe(
+                    \.estimatedProgress,
+                    options: [],
+                    changeHandler: { [weak self] _, _ in
+                        guard let self = self else { return }
+                        self.updateProgress()
+                    })
         
         var urlComponents = URLComponents(string: UnsplashAuthorizeURLString)!  //1
         urlComponents.queryItems = [

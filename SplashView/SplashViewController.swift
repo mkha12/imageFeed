@@ -46,7 +46,13 @@ final class SplashViewController: UIViewController {
                 UIBlockingProgressHUD.dismiss()
                 self.switchToTabBarController()
             case .failure(let error):
+                print("Network request failed: \(error)")
                 UIBlockingProgressHUD.dismiss()
+                DispatchQueue.main.async {
+                       let alertController = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось загрузить профиль", preferredStyle: .alert)
+                       alertController.addAction(UIAlertAction(title: "Ок", style: .default))
+                       self.present(alertController, animated: true, completion: nil)
+                   }
                 break
             }
         }
@@ -95,7 +101,11 @@ extension SplashViewController: AuthViewControllerDelegate {
                 self.fetchProfile(token: authToken)
             case .failure:
                 UIBlockingProgressHUD.dismiss()
-                // TODO [Sprint 11]
+                DispatchQueue.main.async {
+                       let alertController = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось войти в систему", preferredStyle: .alert)
+                       alertController.addAction(UIAlertAction(title: "Ок", style: .default))
+                       self.present(alertController, animated: true, completion: nil)
+                   }
                 break
             }
         }
