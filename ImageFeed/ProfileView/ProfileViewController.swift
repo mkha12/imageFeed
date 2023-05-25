@@ -6,6 +6,7 @@ class ProfileViewController: UIViewController {
     private var nickNameLabel: UILabel?
     private var descriptionLabel: UILabel?
     private let profileService = ProfileService.shared
+    private var profileImageServiceObserver: NSObjectProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -16,12 +17,32 @@ class ProfileViewController: UIViewController {
                 configureDescriptionLabel()
                 configureExitButton()
         
+        profileImageServiceObserver = NotificationCenter.default    // 2
+                    .addObserver(
+                        forName: ProfileImageService.DidChangeNotification, // 3
+                        object: nil,                                        // 4
+                        queue: .main                                        // 5
+                    ) { [weak self] _ in
+                        guard let self = self else { return }
+                        self.updateAvatar()                                 // 6
+                    }
+                updateAvatar()
+        
         if let profile = profileService.profile {
             userNameLabel?.text = profile.name
             nickNameLabel?.text = profile.loginName
             descriptionLabel?.text = profile.bio
         }
     }
+    
+    private func updateAvatar() {                                   // 8
+            guard
+                let profileImageURL = ProfileImageService.shared.avatarURL,
+                let url = URL(string: profileImageURL)
+            else { return }
+            // TODO [Sprint 11] Обновить аватар, используя Kingfisher
+        }
+    
     
     private func configureProfileImageView() {
         let profileImage = UIImage(named: "Photo")

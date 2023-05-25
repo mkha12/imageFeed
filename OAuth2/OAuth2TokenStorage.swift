@@ -3,7 +3,7 @@ import Foundation
 
 final class OAuth2TokenStorage {
     var token: String?
-    private static let tokenKey = "BearerToken"
+    private static let tokenKey:String = "BearerToken"
     
     static var token: String? {
         get {
