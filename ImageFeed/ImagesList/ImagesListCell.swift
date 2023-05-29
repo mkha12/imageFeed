@@ -8,4 +8,3 @@ final class ImagesListCell: UITableViewCell {
     @IBOutlet weak var CellImage: UIImageView!
     
 }
-

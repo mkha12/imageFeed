@@ -5,7 +5,7 @@ final class OAuth2Service {
     let urlSession = URLSession.shared
     private var activeTask: URLSessionTask?
     private var activeCode: String?
-
+    
     
     private(set) var authToken: String? {
         get {
@@ -37,8 +37,7 @@ final class OAuth2Service {
         activeCode = code
         
         let request = authTokenRequest(code: code)
-        //let task = self.object(for: request) { [weak self] result in
-            let task = self.urlSession.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
+        let task = self.urlSession.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 self.activeTask = nil
@@ -48,7 +47,7 @@ final class OAuth2Service {
                     self.authToken = authToken
                     completion(.success(authToken))
                 case .failure(let error):
-                    self.activeCode = nil 
+                    self.activeCode = nil
                     completion(.failure(error))
                 }
             }
@@ -57,8 +56,8 @@ final class OAuth2Service {
         activeTask = task
         task.resume()
     }
-
-
+    
+    
     private func object(
         for request: URLRequest,
         completion: @escaping (Result<OAuthTokenResponseBody, Error>) -> Void
@@ -111,35 +110,6 @@ final class OAuth2Service {
             case scope
             case createdAt = "created_at"
         }
-    }
-}
-
-
-extension URLSession {
-    func objectTask<T: Decodable>(
-        for request: URLRequest,
-        completion: @escaping (Result<T, Error>) -> Void
-    ) -> URLSessionTask {
-        let task = dataTask(with: request, completionHandler: { data, response, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    completion(.failure(error))
-                } else if let data = data,
-                          let response = response as? HTTPURLResponse,
-                          200..<300 ~= response.statusCode {
-                    do {
-                        let decoder = JSONDecoder()
-                        let result = try decoder.decode(T.self, from: data)
-                        completion(.success(result))
-                    } catch {
-                        completion(.failure(error))
-                    }
-                } else {
-                    completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Unknown error occurred"])))
-                }
-            }
-        })
-        return task
     }
 }
 
