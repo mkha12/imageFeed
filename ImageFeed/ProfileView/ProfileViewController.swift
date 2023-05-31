@@ -2,7 +2,7 @@ import UIKit
 import Kingfisher
 
 
-class ProfileViewController: UIViewController {
+final class ProfileViewController: UIViewController {
     
     private var userNameLabel: UILabel?
     private var nickNameLabel: UILabel?
@@ -19,7 +19,8 @@ class ProfileViewController: UIViewController {
         configureNickNameLabel()
         configureDescriptionLabel()
         configureExitButton()
-        
+        view.backgroundColor = .ypBlack
+
         profileImageServiceObserver = NotificationCenter.default
             .addObserver(
                 forName: ProfileImageService.DidChangeNotification,
@@ -73,7 +74,7 @@ class ProfileViewController: UIViewController {
         labelUserName.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(labelUserName)
         labelUserName.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20).isActive = true
-        labelUserName.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 120).isActive = true
+        labelUserName.topAnchor.constraint(equalTo: profileImageView?.bottomAnchor ?? view.safeAreaLayoutGuide.topAnchor, constant: 20).isActive = true
         self.userNameLabel = labelUserName
         
     }

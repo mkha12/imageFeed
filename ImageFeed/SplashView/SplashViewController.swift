@@ -3,9 +3,7 @@ import ProgressHUD
 
 final class SplashViewController: UIViewController {
     
-    private let ShowAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
-    private let oauth2Service = OAuth2Service()
-    private let oauth2TokenStorage = OAuth2TokenStorage()
+    private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
     private let profileService = ProfileService.shared
     
     override func viewDidAppear(_ animated: Bool) {
@@ -49,20 +47,21 @@ final class SplashViewController: UIViewController {
             .instantiateViewController(withIdentifier: "TabBarViewController")
         window.rootViewController = tabBarController
     }
+    
     func fetchProfile(token: String) {
-        profileService.fetchProfile(token) { result in
+        profileService.fetchProfile(token) { [weak self] result in
             switch result {
             case .success(let profile):
-                ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { _ in }
-                UIBlockingProgressHUD.dismiss()
-                self.switchToTabBarController()
+                ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { _ in
+                    UIBlockingProgressHUD.dismiss()
+                    self?.switchToTabBarController() } // теперь опциональное значение
             case .failure(let error):
                 print("Network request failed: \(error)")
                 UIBlockingProgressHUD.dismiss()
                 DispatchQueue.main.async {
                     let alertController = UIAlertController(title: "Что-то пошло не так(", message: "Не удалось загрузить профиль", preferredStyle: .alert)
                     alertController.addAction(UIAlertAction(title: "Ок", style: .default))
-                    self.present(alertController, animated: true, completion: nil)
+                    self?.present(alertController, animated: true, completion: nil) // и тут тоже
                 }
                 break
             }
@@ -75,7 +74,7 @@ extension SplashViewController: AuthViewControllerDelegate {
         UIBlockingProgressHUD.show()
         dismiss(animated: true) { [weak self] in
             guard let self = self else { return }
-            self.fetchOAuthToken(code)
+                self.fetchOAuthToken(code)
         }
     }
     
@@ -88,9 +87,6 @@ extension SplashViewController: AuthViewControllerDelegate {
             case .success(let authToken):
                 UIBlockingProgressHUD.dismiss()
                 OAuth2TokenStorage.token = authToken
-                DispatchQueue.main.async {
-                    self.switchToTabBarController()
-                }
                 self.fetchProfile(token: authToken)
             case .failure:
                 UIBlockingProgressHUD.dismiss()
