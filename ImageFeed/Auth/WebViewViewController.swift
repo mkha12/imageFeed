@@ -13,19 +13,28 @@ final class WebViewViewController: UIViewController {
         
     }
     weak var delegate: WebViewViewControllerDelegate?
+    private var estimatedProgressObservation: NSKeyValueObservation?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         webView.navigationDelegate = self
+        estimatedProgressObservation = webView.observe(
+            \.estimatedProgress,
+             options: [],
+             changeHandler: { [weak self] _, _ in
+                 guard let self = self else { return }
+                 self.updateProgress()
+             })
         
-        var urlComponents = URLComponents(string: UnsplashAuthorizeURLString)!  //1
+        var urlComponents = URLComponents(string: UnsplashAuthorizeURLString)!
         urlComponents.queryItems = [
-            URLQueryItem(name: "client_id", value: AccessKey),                  //2
-            URLQueryItem(name: "redirect_uri", value: RedirectURI),             //3
-            URLQueryItem(name: "response_type", value: "code"),                 //4
-            URLQueryItem(name: "scope", value: AccessScope)                     //5
+            URLQueryItem(name: "client_id", value: AccessKey),
+            URLQueryItem(name: "redirect_uri", value: RedirectURI),
+            URLQueryItem(name: "response_type", value: "code"),
+            URLQueryItem(name: "scope", value: AccessScope)
         ]
-        let url = urlComponents.url!                                            //6
+        let url = urlComponents.url!                                           
         
         let request = URLRequest(url: url)
         webView.load(request)
@@ -64,7 +73,7 @@ final class WebViewViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress))
-    } // эту функцию добавила сама
+    }
     
     
 }
@@ -81,7 +90,7 @@ extension WebViewViewController: WKNavigationDelegate {
             decisionHandler(.allow)
         }
     }
-
+    
     private func code(from navigationAction: WKNavigationAction) -> String? {
         if
             let url = navigationAction.request.url,
