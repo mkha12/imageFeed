@@ -8,7 +8,6 @@ final class ImagesListService {
     static let DidChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
     private var currentTask: URLSessionDataTask?
     
-    
     func fetchPhotosNextPage(
         completion: @escaping (Result<[Photo], Error>) -> Void) {
             let nextPage = lastLoadedPage == nil ? 1 : lastLoadedPage! + 1
@@ -20,8 +19,9 @@ final class ImagesListService {
                 return
             }
             if let token = OAuth2TokenStorage.token {
-                        request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-                    }
+                
+                request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            }
             let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
                 if let error = error {
                     completion(.failure(error))
@@ -31,11 +31,14 @@ final class ImagesListService {
                     completion(.failure(NSError(domain: "", code: -1, userInfo: nil)))
                     return
                 }
-                
                 do {
                     let decoder = JSONDecoder()
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+                    decoder.dateDecodingStrategy = .formatted(formatter)
+                    
                     let photoResults = try decoder.decode([PhotoResult].self, from: data)
-                            
+                    
                     let photos = photoResults.map {
                         Photo(
                             id: $0.id,
@@ -50,10 +53,11 @@ final class ImagesListService {
                     }
                     DispatchQueue.main.async {
                         self.photos += photos
-                                    NotificationCenter.default.post(name: ImagesListService.DidChangeNotification, object: nil)
-                                    completion(.success(photos))
-                                }
-        
+                        self.lastLoadedPage = nextPage
+                        NotificationCenter.default.post(name: ImagesListService.DidChangeNotification, object: nil)
+                        completion(.success(photos))
+                    }
+                    
                 }
                 catch {
                     print("Ошибка декодирования: \(error)")
@@ -63,53 +67,113 @@ final class ImagesListService {
             task.resume()
             currentTask = task
         }
-}
     
-    
-    struct PhotoResult: Codable {
-        let id: String
-        let createdAt: String
-        let updatedAt: String
-        let width: Int
-        let height: Int
-        let color: String
-        let blurHash: String
-        let likes: Int
-        let likedByUser: Bool
-        let description: String?
-        let urls: UrlsResult
-        
-        enum CodingKeys: String, CodingKey {
-            case id
-            case createdAt = "created_at"
-            case updatedAt = "updated_at"
-            case width
-            case height
-            case color
-            case blurHash = "blur_ hash"
-            case likes
-            case likedByUser = "liked_by_user"
-            case description
-            case urls
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
+        guard let url = URL(string: "https://api.unsplash.com/photos/\(photoId)/like") else {
+            completion(.failure(NSError(domain: "", code: -1, userInfo: nil)))
+            return
         }
+        var request = URLRequest(url:url)
+        request.addValue("Bearer \(OAuth2TokenStorage.token ?? "")", forHTTPHeaderField: "Authorization")
+        request.httpMethod = isLike ? "POST" : "DELETE"
+        
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+                return
+            }
+            guard let data = data else {
+                DispatchQueue.main.async {
+                    completion(.failure(NSError(domain: "", code: -1, userInfo: nil)))
+                }
+                return
+            }
+            do {
+                
+                let decoder = JSONDecoder()
+                let formatter = DateFormatter()
+                formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+                decoder.dateDecodingStrategy = .formatted(formatter)
+                // let photoResult = try decoder.decode(PhotoResult.self, from: data)
+                let likeResponse = try decoder.decode(LikeResponse.self, from: data)
+                let photoResult = likeResponse.photo
+                let updatedPhoto = Photo(
+                    id: photoResult.id,
+                    size: CGSize(width: photoResult.width, height: photoResult.height),
+                    createdAt: photoResult.createdAt,
+                    welcomeDescription: photoResult.description,
+                    thumbImageURL: photoResult.urls.thumb,
+                    largeImageURL: photoResult.urls.full,
+                    fullImageUrl: photoResult.urls.full,
+                    isLiked: photoResult.likedByUser
+                )
+                DispatchQueue.main.async {
+                    if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
+                        self.photos[index] = updatedPhoto
+                        NotificationCenter.default.post(name: ImagesListService.DidChangeNotification, object: nil)
+                        completion(.success(()))
+                        
+                    }
+                }
+            } catch {
+                print("Ошибка декодирования: \(error)")
+                completion(.failure(error))
+            }
+        }
+        task.resume()
     }
+}
 
-    struct UrlsResult: Codable {
-        let raw: String
-        let full: String
-        let regular: String
-        let small: String
-        let thumb: String
+struct PhotoResult: Codable {
+    let id: String
+    let createdAt: Date
+    let updatedAt: Date
+    let width: Int
+    let height: Int
+    let color: String
+    let blurHash: String
+    let likes: Int
+    let likedByUser: Bool
+    let description: String?
+    let urls: UrlsResult
+    
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+        case width
+        case height
+        case color
+        case blurHash = "blur_hash"
+        case likes
+        case likedByUser = "liked_by_user"
+        case description
+        case urls
     }
-    struct Photo {
-        let id: String
-        let size: CGSize
-        let createdAt: String?
-        let welcomeDescription: String?
-        let thumbImageURL: String
-        let largeImageURL: String
-        let fullImageUrl: String
-        let isLiked: Bool
-    }
+}
 
+struct UrlsResult: Codable {
+    let raw: String
+    let full: String
+    let regular: String
+    let small: String
+    let thumb: String
+}
+struct Photo {
+    let id: String
+    let size: CGSize
+    let createdAt: Date?
+    let welcomeDescription: String?
+    let thumbImageURL: String
+    let largeImageURL: String
+    let fullImageUrl: String
+    var isLiked: Bool
+}
 
+struct LikeResponse: Codable {
+    let photo: PhotoResult
+    let user: UserResult
+}
