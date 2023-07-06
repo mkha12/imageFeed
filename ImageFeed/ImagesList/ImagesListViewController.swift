@@ -5,7 +5,8 @@ class ImagesListViewController: UIViewController {
     private let ShowSingleImageSegueIdentifier = "ShowSingleImage"
     private let imageService = ImagesListService()
     var photos: [Photo] = []
-    
+    var photo: Photo!
+
     
     
     @IBOutlet private weak var tableView: UITableView!
@@ -53,13 +54,13 @@ class ImagesListViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == ShowSingleImageSegueIdentifier,
            let viewController = segue.destination as? SingleImageViewController,
-           let indexPath = sender as? IndexPath,
-           let image = UIImage(named: photosName[indexPath.row]) {
-            viewController.image = image
+           let indexPath = sender as? IndexPath {
+            viewController.photo = photos[indexPath.row] // заменяем передачу UIImage на передачу Photo
         } else {
             super.prepare(for: segue, sender: sender)
         }
     }
+
     func tableView(
         _ tableView: UITableView,
         willDisplay cell: UITableViewCell,

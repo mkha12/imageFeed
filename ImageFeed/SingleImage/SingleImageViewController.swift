@@ -2,14 +2,13 @@ import UIKit
 
 class SingleImageViewController: UIViewController {
     
-    var image: UIImage! {
-        didSet {
-            if isViewLoaded {
-                imageView.image = image
-                rescaleAndCenterImageInScrollView(image: image)
-            }
-        }
-    }
+    var photo: Photo! {
+           didSet {
+               if isViewLoaded {
+                   loadImage()
+               }
+           }
+       }
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var scrollView: UIScrollView!
@@ -27,8 +26,9 @@ class SingleImageViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         scrollView.delegate = self // добавила
-        imageView.image = image
-        rescaleAndCenterImageInScrollView(image: image)
+        //imageView.image = image
+        loadImage()
+        //rescaleAndCenterImageInScrollView(image: image)
         scrollView.minimumZoomScale = 0.1
         scrollView.maximumZoomScale = 1.25
         
@@ -50,6 +50,30 @@ class SingleImageViewController: UIViewController {
         let y = (newContentSize.height - visibleRectSize.height) / 2
         scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
     }
+    private func loadImage() {
+        UIBlockingProgressHUD.show()
+            imageView.kf.setImage(with: URL(string: photo.fullImageUrl)) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            
+            guard let self = self else { return }
+            switch result {
+            case .success(let imageResult):
+                self.rescaleAndCenterImageInScrollView(image: imageResult.image)
+            case .failure:
+                self.showError()
+            }
+        }
+    }
+
+
+    private func showError() {
+            let alert = UIAlertController(title: "Ошибка", message: "Что-то пошло не так. Попробовать ещё раз?", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Не надо", style: .cancel, handler: nil))
+            alert.addAction(UIAlertAction(title: "Повторить", style: .default, handler: { [weak self] _ in
+                self?.loadImage()
+            }))
+            present(alert, animated: true, completion: nil)
+        }
 }
 
 extension SingleImageViewController: UIScrollViewDelegate {
@@ -57,3 +81,4 @@ extension SingleImageViewController: UIScrollViewDelegate {
         imageView
     }
 }
+
