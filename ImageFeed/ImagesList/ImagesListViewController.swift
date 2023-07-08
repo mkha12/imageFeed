@@ -6,7 +6,7 @@ class ImagesListViewController: UIViewController {
     private let imageService = ImagesListService()
     var photos: [Photo] = []
     var photo: Photo!
-
+    
     
     
     @IBOutlet private weak var tableView: UITableView!
@@ -60,7 +60,7 @@ class ImagesListViewController: UIViewController {
             super.prepare(for: segue, sender: sender)
         }
     }
-
+    
     func tableView(
         _ tableView: UITableView,
         willDisplay cell: UITableViewCell,
@@ -173,5 +173,3 @@ extension ImagesListViewController: ImagesListCellDelegate {
         }
     }
 }
-
-

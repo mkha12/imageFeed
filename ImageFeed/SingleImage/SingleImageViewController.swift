@@ -3,12 +3,12 @@ import UIKit
 class SingleImageViewController: UIViewController {
     
     var photo: Photo! {
-           didSet {
-               if isViewLoaded {
-                   loadImage()
-               }
-           }
-       }
+        didSet {
+            if isViewLoaded {
+                loadImage()
+            }
+        }
+    }
     
     @IBOutlet weak var imageView: UIImageView!
     @IBOutlet weak var scrollView: UIScrollView!
@@ -52,7 +52,7 @@ class SingleImageViewController: UIViewController {
     }
     private func loadImage() {
         UIBlockingProgressHUD.show()
-            imageView.kf.setImage(with: URL(string: photo.fullImageUrl)) { [weak self] result in
+        imageView.kf.setImage(with: URL(string: photo.fullImageUrl)) { [weak self] result in
             UIBlockingProgressHUD.dismiss()
             
             guard let self = self else { return }
@@ -64,16 +64,16 @@ class SingleImageViewController: UIViewController {
             }
         }
     }
-
-
+    
+    
     private func showError() {
-            let alert = UIAlertController(title: "Ошибка", message: "Что-то пошло не так. Попробовать ещё раз?", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Не надо", style: .cancel, handler: nil))
-            alert.addAction(UIAlertAction(title: "Повторить", style: .default, handler: { [weak self] _ in
-                self?.loadImage()
-            }))
-            present(alert, animated: true, completion: nil)
-        }
+        let alert = UIAlertController(title: "Ошибка", message: "Что-то пошло не так. Попробовать ещё раз?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Не надо", style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: "Повторить", style: .default, handler: { [weak self] _ in
+            self?.loadImage()
+        }))
+        present(alert, animated: true, completion: nil)
+    }
 }
 
 extension SingleImageViewController: UIScrollViewDelegate {
@@ -81,4 +81,3 @@ extension SingleImageViewController: UIScrollViewDelegate {
         imageView
     }
 }
-

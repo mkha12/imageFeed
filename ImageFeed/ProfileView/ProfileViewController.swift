@@ -1,4 +1,5 @@
 import UIKit
+import WebKit
 import Kingfisher
 
 
@@ -20,7 +21,7 @@ final class ProfileViewController: UIViewController {
         configureDescriptionLabel()
         configureExitButton()
         view.backgroundColor = .ypBlack
-
+        
         profileImageServiceObserver = NotificationCenter.default
             .addObserver(
                 forName: ProfileImageService.DidChangeNotification,
@@ -50,7 +51,7 @@ final class ProfileViewController: UIViewController {
     
     
     private func configureProfileImageView() {
-       
+        
         let profileImage = UIImage(named: "Photo")
         let imageView = UIImageView(image: profileImage)
         imageView.tintColor = .ypGray
@@ -63,7 +64,7 @@ final class ProfileViewController: UIViewController {
         profileImageView = imageView
         imageView.layer.cornerRadius = 35
         imageView.layer.masksToBounds = true
-
+        
     }
     
     
@@ -112,6 +113,33 @@ final class ProfileViewController: UIViewController {
         button.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 55).isActive = true
         button.widthAnchor.constraint(equalToConstant: 30).isActive = true
         button.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        button.addTarget(self, action: #selector(didTapLogoutButton), for: .touchUpInside)
+    }
+    @objc private func didTapLogoutButton() {
+        OAuth2TokenStorage.logout()
+        self.cleanCookiesAndCache()
+        DispatchQueue.main.async {
+            self.switchToSplashViewController()
+        }
         
     }
+    
+    private func cleanCookiesAndCache() {
+        HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
+        WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { records in
+            records.forEach { record in
+                WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes, for: [record], completionHandler: {})
+            }
+        }
+    }
+    
+    func switchToSplashViewController() {
+        let splashViewController = SplashViewController()
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let delegate = windowScene.delegate as? SceneDelegate
+        else { return }
+        
+        delegate.window?.rootViewController = splashViewController
+    }
+    
 }
