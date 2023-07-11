@@ -117,10 +117,10 @@ final class ProfileViewController: UIViewController {
     }
     @objc private func didTapLogoutButton() {
         OAuth2TokenStorage.logout()
-        self.cleanCookiesAndCache()
-        DispatchQueue.main.async {
-            self.switchToSplashViewController()
-        }
+        cleanCookiesAndCache()
+        DispatchQueue.main.async { [weak self] in
+               self?.switchToSplashViewController()
+           }
         
     }
     

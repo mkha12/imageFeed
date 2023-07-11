@@ -3,12 +3,9 @@ import SwiftKeychainWrapper
 
 
 final class OAuth2TokenStorage {
+    
     var token: String?
     private static let tokenKey:String = "BearerToken"
-    
-    static func logout() {
-        KeychainWrapper.standard.removeObject(forKey: tokenKey)
-    }
     
     static var token: String? {
         get {
@@ -22,4 +19,10 @@ final class OAuth2TokenStorage {
             }
         }
     }
+    
+    static func logout() {
+        KeychainWrapper.standard.removeObject(forKey: tokenKey)
+    }
+    
+   
 }

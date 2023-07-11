@@ -7,13 +7,13 @@ final class ImagesListCell: UITableViewCell {
     
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var likeButton: UIButton!
-    @IBOutlet weak var CellImage: UIImageView!
+    @IBOutlet var cellImage: UIImageView!
     weak var delegate: ImagesListCellDelegate?
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        CellImage.kf.cancelDownloadTask()
-        CellImage.image = nil
+        cellImage.kf.cancelDownloadTask()
+        cellImage.image = nil
     }
     
     @IBAction func likeButtonClicked(_ sender: Any) {

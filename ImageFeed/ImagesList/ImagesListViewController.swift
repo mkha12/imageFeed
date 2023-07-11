@@ -2,15 +2,13 @@ import UIKit
 import Kingfisher
 
 class ImagesListViewController: UIViewController {
-    private let ShowSingleImageSegueIdentifier = "ShowSingleImage"
-    private let imageService = ImagesListService()
+    
     var photos: [Photo] = []
     var photo: Photo!
-    
-    
-    
     @IBOutlet private weak var tableView: UITableView!
     private let photosName: [String] = Array(0..<21).map{ "\($0)" }
+    private let ShowSingleImageSegueIdentifier = "ShowSingleImage"
+    private let imageService = ImagesListService()
     
     override func viewDidLoad() {
         
@@ -18,7 +16,7 @@ class ImagesListViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
-        NotificationCenter.default.addObserver(self, selector: #selector(updateTableViewAnimated), name: ImagesListService.DidChangeNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(updateTableViewAnimated), name: ImagesListService.didChangeNotification, object: nil)
         imageService.fetchPhotosNextPage { result in
             switch result {
             case .success(let photos):
@@ -29,12 +27,22 @@ class ImagesListViewController: UIViewController {
         }
     }
     
-    private var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .long
-        formatter.timeStyle = .none
-        return formatter
-    }()
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == ShowSingleImageSegueIdentifier,
+           let viewController = segue.destination as? SingleImageViewController,
+           let indexPath = sender as? IndexPath {
+            viewController.photo = photos[indexPath.row] // заменяем передачу UIImage на передачу Photo
+        } else {
+            super.prepare(for: segue, sender: sender)
+        }
+    }
+    
+    private lazy var dateFormatter: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "dd MMMM yyyy"
+            formatter.locale = Locale(identifier: "ru_RU")
+            return formatter
+        }()
     
     @objc func updateTableViewAnimated() {
         let oldCount = photos.count
@@ -51,26 +59,17 @@ class ImagesListViewController: UIViewController {
         }
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == ShowSingleImageSegueIdentifier,
-           let viewController = segue.destination as? SingleImageViewController,
-           let indexPath = sender as? IndexPath {
-            viewController.photo = photos[indexPath.row] // заменяем передачу UIImage на передачу Photo
-        } else {
-            super.prepare(for: segue, sender: sender)
-        }
-    }
     
     func tableView(
         _ tableView: UITableView,
         willDisplay cell: UITableViewCell,
         forRowAt indexPath: IndexPath) {
             if indexPath.row + 1 == imageService.photos.count {
-                imageService.fetchPhotosNextPage(completion: { result in
+                imageService.fetchPhotosNextPage(completion: { [weak self] result in
                     switch result {
                     case .success(let photos):
                         DispatchQueue.main.async {
-                            self.tableView.reloadData()
+                            self?.tableView.reloadData()
                         }
                         
                     case .failure(let error):
@@ -129,13 +128,19 @@ extension ImagesListViewController: UITableViewDelegate {
 }
 
 extension ImagesListViewController {
+    
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
         let photo = photos[indexPath.row]
-        cell.dateLabel.text = dateFormatter.string(from: photo.createdAt ?? Date())
+        
+        if let createdAt = photo.createdAt {
+            cell.dateLabel.text = dateFormatter.string(from: createdAt)
+        } else {
+            cell.dateLabel.text = ""
+        }
         
         if let url = URL(string: photo.thumbImageURL) {
-            cell.CellImage.kf.indicatorType = .activity
-            cell.CellImage.kf.setImage(
+            cell.cellImage.kf.indicatorType = .activity
+            cell.cellImage.kf.setImage(
                 with: url,
                 placeholder: UIImage(named: "zaglushka")
             )
@@ -155,10 +160,11 @@ extension ImagesListViewController: ImagesListCellDelegate {
         let photo = imageService.photos[indexPath.row]
         UIBlockingProgressHUD.show()
         let newLikeStatus = !photo.isLiked
-        imageService.changeLike(photoId: photo.id, isLike: newLikeStatus) { result in
+        imageService.changeLike(photoId: photo.id, isLike: newLikeStatus) { [weak self] result in
             switch result {
-            case .success ():
+            case .success:
                 DispatchQueue.main.async {
+                    guard let self = self else { return }
                     cell.setIsLiked(newLikeStatus)
                     self.photos[indexPath.row].isLiked = newLikeStatus
                     self.tableView.reloadRows(at: [indexPath], with: .automatic)
@@ -168,8 +174,8 @@ extension ImagesListViewController: ImagesListCellDelegate {
                 DispatchQueue.main.async {
                     UIBlockingProgressHUD.dismiss()
                 }
-                
             }
         }
     }
 }
+

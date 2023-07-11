@@ -1,6 +1,7 @@
 import Foundation
 
 final class OAuth2Service {
+    
     static let shared = OAuth2Service()
     let urlSession = URLSession.shared
     private var activeTask: URLSessionTask?
@@ -85,9 +86,9 @@ final class OAuth2Service {
     
     private func authTokenRequest(code: String) -> URLRequest {
         let parameters = [
-            "client_id": AccessKey,
-            "client_secret": SecretKey,
-            "redirect_uri": RedirectURI,
+            "client_id": accessKey,
+            "client_secret": secretKey,
+            "redirect_uri": redirectURI,
             "code": code,
             "grant_type": "authorization_code"
         ]

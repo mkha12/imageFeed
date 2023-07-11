@@ -97,29 +97,32 @@ extension SplashViewController: AuthViewControllerDelegate {
     private func fetchOAuthToken(_ code: String) {
         
         OAuth2Service.shared.fetchOAuthToken(code) { [weak self] result in
-            
-            guard let self = self else { return }
-            switch result {
-            case .success(let authToken):
+            self?.dismiss(animated: true) { [weak self] in
                 UIBlockingProgressHUD.dismiss()
-                OAuth2TokenStorage.token = authToken
-                self.fetchProfile(token: authToken)
-            case .failure:
-                UIBlockingProgressHUD.dismiss()
-                DispatchQueue.main.async {
-                    let alertController = UIAlertController(
-                        title: "Что-то пошло не так(",
-                        message: "Не удалось войти в систему",
-                        preferredStyle: .alert)
-                    alertController.addAction(UIAlertAction(
-                        title: "Ок",
-                        style: .default))
-                    self.present(
-                        alertController, animated: true, completion: nil)
+                
+                guard let self = self else { return }
+                switch result {
+                case .success(let authToken):
+                    OAuth2TokenStorage.token = authToken
+                    self.fetchProfile(token: authToken)
+                    
+                case .failure:
+                    DispatchQueue.main.async {
+                        let alertController = UIAlertController(
+                            title: "Что-то пошло не так(",
+                            message: "Не удалось войти в систему",
+                            preferredStyle: .alert)
+                        alertController.addAction(UIAlertAction(
+                            title: "Ок",
+                            style: .default))
+                        self.present(
+                            alertController, animated: true, completion: nil)
+                    }
+                    break
                 }
-                break
             }
         }
+        
     }
     
 }

@@ -3,14 +3,33 @@ import UIKit
 
 final class ImagesListService {
     
-    var lastLoadedPage: Int?
     private (set) var photos: [Photo] = []
-    static let DidChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
+    static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
     private var currentTask: URLSessionDataTask?
+    var lastLoadedPage: Int = 1
+    
+    private lazy var decoder: JSONDecoder = {
+           let decoder = JSONDecoder()
+           let formatter = DateFormatter()
+           formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+           decoder.dateDecodingStrategy = .formatted(formatter)
+           return decoder
+       }()
+       
+       private lazy var dateFormatter: DateFormatter = {
+           let formatter = DateFormatter()
+           formatter.dateFormat = "d MMMM yyyy"
+           formatter.locale = Locale(identifier: "ru_RU")
+           return formatter
+       }()
+    
+    func displayDate(from date: Date) -> String {
+           return dateFormatter.string(from: date)
+       }
     
     func fetchPhotosNextPage(
         completion: @escaping (Result<[Photo], Error>) -> Void) {
-            let nextPage = lastLoadedPage == nil ? 1 : lastLoadedPage! + 1
+            let nextPage = lastLoadedPage
             guard let url = URL(string: "https://api.unsplash.com/photos?page=\(nextPage)") else {
                 return
             }
@@ -22,7 +41,8 @@ final class ImagesListService {
                 
                 request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
             }
-            let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            let task = URLSession.shared.dataTask(with: request) { [weak self] (data, response, error) in
+                guard let self = self else { return }
                 if let error = error {
                     completion(.failure(error))
                     return
@@ -32,12 +52,7 @@ final class ImagesListService {
                     return
                 }
                 do {
-                    let decoder = JSONDecoder()
-                    let formatter = DateFormatter()
-                    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-                    decoder.dateDecodingStrategy = .formatted(formatter)
-                    
-                    let photoResults = try decoder.decode([PhotoResult].self, from: data)
+                    let photoResults = try self.decoder.decode([PhotoResult].self, from: data)
                     
                     let photos = photoResults.map {
                         Photo(
@@ -53,8 +68,8 @@ final class ImagesListService {
                     }
                     DispatchQueue.main.async {
                         self.photos += photos
-                        self.lastLoadedPage = nextPage
-                        NotificationCenter.default.post(name: ImagesListService.DidChangeNotification, object: nil)
+                        self.lastLoadedPage += 1
+                        NotificationCenter.default.post(name: ImagesListService.didChangeNotification, object: nil)
                         completion(.success(photos))
                     }
                     
@@ -77,7 +92,8 @@ final class ImagesListService {
         request.addValue("Bearer \(OAuth2TokenStorage.token ?? "")", forHTTPHeaderField: "Authorization")
         request.httpMethod = isLike ? "POST" : "DELETE"
         
-        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+        let task = URLSession.shared.dataTask(with: request) { [weak self] (data, response, error) in
+            guard let self = self else { return }
             if let error = error {
                 DispatchQueue.main.async {
                     completion(.failure(error))
@@ -92,12 +108,7 @@ final class ImagesListService {
             }
             do {
                 
-                let decoder = JSONDecoder()
-                let formatter = DateFormatter()
-                formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-                decoder.dateDecodingStrategy = .formatted(formatter)
-                // let photoResult = try decoder.decode(PhotoResult.self, from: data)
-                let likeResponse = try decoder.decode(LikeResponse.self, from: data)
+                let likeResponse = try self.decoder.decode(LikeResponse.self, from: data)
                 let photoResult = likeResponse.photo
                 let updatedPhoto = Photo(
                     id: photoResult.id,
@@ -112,7 +123,7 @@ final class ImagesListService {
                 DispatchQueue.main.async {
                     if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
                         self.photos[index] = updatedPhoto
-                        NotificationCenter.default.post(name: ImagesListService.DidChangeNotification, object: nil)
+                        NotificationCenter.default.post(name: ImagesListService.didChangeNotification, object: nil)
                         completion(.success(()))
                         
                     }
