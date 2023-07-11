@@ -1,6 +1,7 @@
 import Foundation
 
 final class OAuth2Service {
+    
     static let shared = OAuth2Service()
     let urlSession = URLSession.shared
     private var activeTask: URLSessionTask?
@@ -37,21 +38,23 @@ final class OAuth2Service {
         activeCode = code
         
         let request = authTokenRequest(code: code)
-        let task = self.urlSession.objectTask(for: request) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
-            guard let self = self else { return }
-            DispatchQueue.main.async {
-                self.activeTask = nil
-                switch result {
-                case .success(let body):
-                    let authToken = body.accessToken
-                    self.authToken = authToken
-                    completion(.success(authToken))
-                case .failure(let error):
-                    self.activeCode = nil
-                    completion(.failure(error))
+        let task = self.urlSession.objectTask(
+            for: request) { [weak self] (
+                result: Result<OAuthTokenResponseBody, Error>) in
+                guard let self = self else { return }
+                DispatchQueue.main.async {
+                    self.activeTask = nil
+                    switch result {
+                    case .success(let body):
+                        let authToken = body.accessToken
+                        self.authToken = authToken
+                        completion(.success(authToken))
+                    case .failure(let error):
+                        self.activeCode = nil
+                        completion(.failure(error))
+                    }
                 }
             }
-        }
         
         activeTask = task
         task.resume()
@@ -83,9 +86,9 @@ final class OAuth2Service {
     
     private func authTokenRequest(code: String) -> URLRequest {
         let parameters = [
-            "client_id": AccessKey,
-            "client_secret": SecretKey,
-            "redirect_uri": RedirectURI,
+            "client_id": accessKey,
+            "client_secret": secretKey,
+            "redirect_uri": redirectURI,
             "code": code,
             "grant_type": "authorization_code"
         ]
@@ -112,4 +115,3 @@ final class OAuth2Service {
         }
     }
 }
-
