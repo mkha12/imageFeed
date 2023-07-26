@@ -1,3 +1,5 @@
+
+
 import UIKit
 import Kingfisher
 
@@ -12,7 +14,7 @@ final class ProfileImageService {
         let url = URL(string: "https://api.unsplash.com/users/\(username)?client_id=\(AuthConfiguration.standard.accessKey)")!
         
         var request = URLRequest(url: url)
-        request.setValue("Bearer \(OAuth2TokenStorage().token ?? "")", forHTTPHeaderField: "Authorization")
+        request.setValue("Bearer \(OAuth2TokenStorage.token ?? "")", forHTTPHeaderField: "Authorization")
         let task = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
             guard let self = self else { return }
             DispatchQueue.main.async {
@@ -72,3 +74,4 @@ enum ProfileImageError: Error {
     case invalidURL
     case noData
 }
+

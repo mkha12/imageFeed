@@ -1,3 +1,4 @@
+
 import UIKit
 import WebKit
 import SwiftKeychainWrapper
@@ -55,12 +56,6 @@ final class ProfileViewController: UIViewController {
         profileImage.image = ProfileImageService.shared.avatar.image
     }
     
-    @objc func profileLogout() {
-        KeychainWrapper.standard.removeAllKeys()
-        self.clean()
-        self.switchToSplashViewController()
-    }
-
     
     private func switchToSplashViewController() {
         let splashViewController = SplashViewController()
@@ -125,7 +120,6 @@ final class ProfileViewController: UIViewController {
         view.addSubview(logoutButton)
         logoutButton.setImage(UIImage(named: "Logout Button"), for: .normal)
         logoutButton.translatesAutoresizingMaskIntoConstraints = false
-        logoutButton.addTarget(self, action: #selector(profileLogout), for: .touchUpInside)
         logoutButton.accessibilityIdentifier = "logout button"
         
         return logoutButton

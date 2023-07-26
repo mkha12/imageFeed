@@ -1,5 +1,4 @@
 import UIKit
-
 class SplashViewController: UIViewController {
     
     private var profileService = ProfileService.shared
@@ -19,7 +18,7 @@ class SplashViewController: UIViewController {
             splashScreenLogo.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
         
-        if let token = OAuth2TokenStorage().token {
+        if let token = OAuth2TokenStorage.token {
             self.profileService.fetchProfile(token)
             self.profileImageService.fetchProfileImageURL(username: profileService.getProfile()?.username ?? "") { [weak self] result in
                 guard let self = self else { return }
@@ -54,14 +53,13 @@ class SplashViewController: UIViewController {
 }
 
 extension SplashViewController: AuthViewControllerDelegate {
-    
     func acceptToken(code: String) {
         UIBlockingProgressHUD.show()
         oauthService.fetchAuthToken(code) { result in
             DispatchQueue.main.async {
                 switch result {
                 case .success(let accessToken):
-                    OAuth2TokenStorage().token = accessToken
+                    OAuth2TokenStorage.token = accessToken
                     self.profileService.fetchProfile(accessToken)
                     self.profileImageService.fetchProfileImageURL(username: self.profileService.getProfile()?.username ?? "") { [weak self] result in
                         guard let self = self else { return }
@@ -107,3 +105,4 @@ extension SplashViewController {
         return splashScreenLogo
     }
 }
+

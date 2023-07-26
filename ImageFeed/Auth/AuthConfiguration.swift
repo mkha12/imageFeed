@@ -7,7 +7,6 @@ let fileAccessScope = "public+read_user+write_likes"
 let fileDefaultBaseURL = URL(string: "https://api.unsplash.com")!
 
 
-
 let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
 
 struct AuthConfiguration {
@@ -27,3 +26,5 @@ struct AuthConfiguration {
                                      authURLString: unsplashAuthorizeURLString)
         }
 }
+
+

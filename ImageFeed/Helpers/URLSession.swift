@@ -1,30 +1,36 @@
 import Foundation
 
-
 extension URLSession {
     func objectTask<T: Decodable>(
         for request: URLRequest,
         completion: @escaping (Result<T, Error>) -> Void
     ) -> URLSessionTask {
         let task = dataTask(with: request, completionHandler: { data, response, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    completion(.failure(error))
-                } else if let data = data,
-                          let response = response as? HTTPURLResponse,
-                          200..<300 ~= response.statusCode {
-                    do {
-                        let decoder = JSONDecoder()
-                        let result = try decoder.decode(T.self, from: data)
-                        completion(.success(result))
-                    } catch {
-                        completion(.failure(error))
-                    }
+            if let error = error {
+                completion(.failure(NetworkError.urlRequestError(error)))
+            }
+            if let responseCode = (response as? HTTPURLResponse)?.statusCode {
+                if 200..<300 ~= responseCode {
                 } else {
-                    completion(.failure(NSError(domain: "", code: 0, userInfo: [NSLocalizedDescriptionKey: "Unknown error occurred"])))
+                    completion(.failure(NetworkError.httpStatusCode(responseCode)))
+                }
+            }
+            if let data = data {
+                do {
+                    let decoder = JSONDecoder()
+                    let result = try decoder.decode(T.self, from: data)
+                    completion(.success(result))
+                } catch {
+                    completion(.failure(error))
                 }
             }
         })
         return task
     }
 }
+
+enum NetworkError: Error {
+    case httpStatusCode(Int)
+    case urlRequestError(Error)
+}
+
