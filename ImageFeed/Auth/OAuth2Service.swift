@@ -1,6 +1,6 @@
 import Foundation
 
-class OAuth2Service {
+final class OAuth2Service {
     
     private var lastCode: String?
     private var currentTask: URLSessionTask?
