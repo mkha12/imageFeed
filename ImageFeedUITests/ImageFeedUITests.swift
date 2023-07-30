@@ -13,6 +13,7 @@ final class ImageFeedUITests: XCTestCase {
         continueAfterFailure = false
 
         app.launch()
+        print(app.debugDescription)
     }
 
     func testAuth() throws {
@@ -26,14 +27,14 @@ final class ImageFeedUITests: XCTestCase {
             XCTAssert(loginTextField.waitForExistence(timeout: 5), "Login text field did not appear in time")
 
             loginTextField.tap()
-            loginTextField.typeText("arbuss12@gmail.com")
+            loginTextField.typeText("")
             webView.swipeUp()
 
             let passwordTextField = webView.descendants(matching: .secureTextField).element
             XCTAssert(passwordTextField.waitForExistence(timeout: 5), "Password text field did not appear in time")
 
             passwordTextField.tap()
-            passwordTextField.typeText("12341234M")
+            passwordTextField.typeText("")
             webView.swipeUp()
 
             webView.buttons["Login"].tap()

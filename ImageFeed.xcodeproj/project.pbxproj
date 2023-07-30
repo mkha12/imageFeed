@@ -465,7 +465,8 @@
 				DEVELOPMENT_TEAM = M64V58BG55;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "ru.yandex.practicumygkjhgjh.ImageFeedTests--13-sprint-";
+				PRODUCT_BUNDLE_IDENTIFIER = gfhdghdghfgh;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = fhfghfghfghfghfghfgh;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
@@ -483,7 +484,8 @@
 				DEVELOPMENT_TEAM = M64V58BG55;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "ru.yandex.practicumygkjhgjh.ImageFeedTests--13-sprint-";
+				PRODUCT_BUNDLE_IDENTIFIER = gfhdghdghfgh;
+				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = fhfghfghfghfghfghfgh;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;

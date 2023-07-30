@@ -56,6 +56,24 @@ final class ProfileViewController: UIViewController {
         profileImage.image = ProfileImageService.shared.avatar.image
     }
     
+    @objc func profileLogout() {
+        let alert = UIAlertController(title: "Пока, пока!", message: "Уверены, что хотите выйти?", preferredStyle: .alert)
+        alert.view.accessibilityIdentifier = "bye_bye"
+        let yesAction = UIAlertAction(title: "Да", style: .default) { [weak self] _ in
+            guard let self = self else { return }
+            KeychainWrapper.standard.removeAllKeys()
+            self.clean()
+            self.switchToSplashViewController()
+        }
+        yesAction.accessibilityIdentifier = "logout_yes"
+        
+        let noAction = UIAlertAction(title: "Нет", style: .cancel)
+        
+        alert.addAction(yesAction)
+        alert.addAction(noAction)
+        
+        present(alert, animated: true, completion: nil)
+    }
     
     private func switchToSplashViewController() {
         let splashViewController = SplashViewController()
@@ -120,6 +138,7 @@ final class ProfileViewController: UIViewController {
         view.addSubview(logoutButton)
         logoutButton.setImage(UIImage(named: "Logout Button"), for: .normal)
         logoutButton.translatesAutoresizingMaskIntoConstraints = false
+        logoutButton.addTarget(self, action: #selector(profileLogout), for: .touchUpInside)
         logoutButton.accessibilityIdentifier = "logout button"
         
         return logoutButton
