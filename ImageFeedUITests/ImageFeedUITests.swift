@@ -2,8 +2,8 @@
 import XCTest
 
 final class ImageFeedUITests: XCTestCase {
-   // let email = ""
-   //let password = ""
+    let email = ""
+    let password = ""
     let fullname = ""
     let username = ""
 
@@ -27,14 +27,14 @@ final class ImageFeedUITests: XCTestCase {
             XCTAssert(loginTextField.waitForExistence(timeout: 5), "Login text field did not appear in time")
 
             loginTextField.tap()
-            loginTextField.typeText("")
+            loginTextField.typeText(email)
             webView.swipeUp()
 
             let passwordTextField = webView.descendants(matching: .secureTextField).element
             XCTAssert(passwordTextField.waitForExistence(timeout: 5), "Password text field did not appear in time")
 
             passwordTextField.tap()
-            passwordTextField.typeText("")
+            passwordTextField.typeText(password)
             webView.swipeUp()
 
             webView.buttons["Login"].tap()
