@@ -40,6 +40,7 @@
                                                 </imageView>
                                                 <button opaque="NO" contentMode="scaleToFill" restorationIdentifier="like button" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="S1d-9f-m4c" userLabel="Like Button">
                                                     <rect key="frame" x="335" y="4" width="42" height="42"/>
+                                                    <accessibility key="accessibilityConfiguration" identifier="like button"/>
                                                     <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                                                     <state key="normal" image="like_button_off"/>
                                                     <connections>
@@ -146,6 +147,7 @@ YP Background</string>
                             </scrollView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IPl-vI-XMp">
                                 <rect key="frame" x="24" y="67" width="48" height="48"/>
+                                <accessibility key="accessibilityConfiguration" identifier="nav_back_button"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="48" id="FYp-mD-q7p"/>
                                     <constraint firstAttribute="width" constant="48" id="paL-HZ-Oxs"/>
