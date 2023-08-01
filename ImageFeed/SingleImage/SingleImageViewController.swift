@@ -1,6 +1,6 @@
 import UIKit
 
-class SingleImageViewController: UIViewController {
+final class SingleImageViewController: UIViewController {
     
     var photo: Photo! {
         didSet {

@@ -1,7 +1,7 @@
 import UIKit
 import Kingfisher
 
-class ImagesListViewController: UIViewController {
+final class ImagesListViewController: UIViewController {
     
     var photos: [Photo] = []
     var photo: Photo!
